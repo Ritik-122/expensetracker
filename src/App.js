@@ -1,6 +1,7 @@
+import Form from './LoginSign/Login'
 function App() {
   return (
-<h1>hi</h1>
+<Form/>
   );
 }
 
