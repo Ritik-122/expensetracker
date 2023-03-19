@@ -1,8 +1,9 @@
 import Form from "./LoginSign/Login";
-import { Route, Redirect,Switch } from "react-router-dom";
+import { Route,Switch } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "./store/context";
-import Welcome from "./Welcome";
+import Welcome from './Pages/Welcome'
+import ProfilePage from './Pages/ProfilePage'
 function App() {
   const AuthCtx = useContext(AuthContext);
   console.log(AuthCtx.isLoggedIn)
@@ -17,7 +18,9 @@ function App() {
       {AuthCtx.isLoggedIn && <Route path='/welcome'>
         <Welcome/>
       </Route>}
-     
+     <Route path='/profile'>
+      <ProfilePage/>
+     </Route>
       
       
       </Switch>

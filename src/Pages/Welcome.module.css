@@ -1,0 +1,9 @@
+sp{
+display:flex;
+justify-content: flex-start;
+
+}
+pa{
+display: flex;
+justify-content: flex-end;
+}
