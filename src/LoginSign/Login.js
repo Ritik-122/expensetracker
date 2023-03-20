@@ -2,16 +2,20 @@ import React, { useContext, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "../Card/Card";
-import {useHistory} from 'react-router-dom'
+import { Link, useHistory } from "react-router-dom";
 import AuthContext from "../store/context";
+import { Alert } from "react-bootstrap";
 export default function Login() {
-const history=useHistory()
+  const[isLoading,setisLoding]=useState(false)
+  const history = useHistory();
   const email = useRef("");
   const password = useRef("");
   const cnfpassword = useRef("");
-  const AuthCtx=useContext(AuthContext)
+  const AuthCtx = useContext(AuthContext);
+
+  const [signUp, setSignUp] = useState(false);
+ 
   
-  const [signUp,setSignUp]=useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,59 +25,56 @@ const history=useHistory()
     if (passwordValue !== cnfpasswordValue) {
       alert("Password doesn't match");
     } else {
-      if(signUp===false){
-      
-      const res = await fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: emailValue,
-            password: passwordValue,
-            returnSecureToken: true,
-          }),
-          mode: "cors",
-          headers: { "Content-Type": "application/json" },
+      if (signUp === false) {
+        const res = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: emailValue,
+              password: passwordValue,
+              returnSecureToken: true,
+            }),
+            mode: "cors",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (!res.ok) {
+          const d = await res.json();
+          alert(d.error.message);
         }
-      );
-      if (!res.ok) {
-        const d = await res.json();
-        alert(d.error.message);
-      }
-      if (res.ok) {
-        const data = await res.json();
-      
-        console.log("User registered",data);
-      }
-    }
-    else{
-     
-      const res = await fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: emailValue,
-            password: passwordValue,
-            returnSecureToken: true,
-          }),
-          mode: "cors",
-          headers: { "Content-Type": "application/json" },
+        if (res.ok) {
+          const data = await res.json();
+
+          console.log("User registered", data);
         }
-      );
-      if (!res.ok) {
-        const d = await res.json();
-        alert(d.error.message);
+      } else {
+        const res = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: emailValue,
+              password: passwordValue,
+              returnSecureToken: true,
+            }),
+            mode: "cors",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (!res.ok) {
+          const d = await res.json();
+          alert(d.error.message);
+        }
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem("Token", data.idToken);
+         
+          console.log("LoggedIn");
+          AuthCtx.addUser(data.idToken);
+          history.replace("/welcome");
+        }
       }
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("Token", data.idToken);
-        // localStorage.setItem('userEmailId',data.email)
-        console.log("LoggedIn");
-        AuthCtx.addUser(data.idToken)
-        history.replace('/welcome')
-      }
-    }
     }
 
     email.current.value = "";
@@ -81,16 +82,47 @@ const history=useHistory()
     cnfpassword.current.value = "";
   };
 
-
-  const clickHandler=()=>{
-    if(signUp===false)
-    {
-      setSignUp(true)
-
+  const clickHandler = () => {
+    if (signUp === false) {
+      setSignUp(true);
+    } else {
+      setSignUp(false);
+    }
+  };
+  //--------------------------------------------forgot password------------------------------------
+  const forgotPassword = async () => {
+    const emailValue = email.current.value;
+    if(emailValue==='' ){
+      alert('Write your email and click on forgot password')
     }else{
-      setSignUp(false)
+
+      if(signUp===true){
+        setisLoding(true)
+    const res = await fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          email: emailValue,
+          requestType:"PASSWORD_RESET"
+        }),
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    if (!res.ok) {
+      const d = await res.json();
+      alert(d.error.message);
+    }
+    if (res.ok) {
+      const data = await res.json();
+      setisLoding(false)
+     
+    }
     }
   }
+  };
+  //-------------------------------------------return ----------------------------------------
   return (
     <>
       <Card>
@@ -126,11 +158,22 @@ const history=useHistory()
               required
             />
           </Form.Group>
-          {!AuthCtx.isLoggedIn && <Button variant="primary" type="submit" >
-           {signUp?'Login':'SignUp'}
-          </Button>}
-          <Button size="sm" className="mx-3">{signUp===true ? <p onClick={clickHandler}>Create new account</p> : <p onClick={clickHandler}>Login with existing account</p>}</Button>
+          {!AuthCtx.isLoggedIn && (
+            <Button variant="primary" type="submit">
+              {signUp ? "Login" : "SignUp"}
+            </Button>
+          )}
+          <Button size="sm" className="mx-3">
+            {signUp === true ? (
+              <p onClick={clickHandler}>Create new account</p>
+            ) : (
+              <p onClick={clickHandler}>Login with existing account</p>
+            )}
+          </Button>
+          <span style={{cursor:'pointer',color:'red'}} onClick={forgotPassword}>Forgot Password?</span>
+          {isLoading && <Alert>Sending request</Alert>}
         </Form>
+        
       </Card>
     </>
   );

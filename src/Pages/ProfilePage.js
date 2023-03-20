@@ -10,7 +10,7 @@ const name = useRef('');
 const url = useRef('');
 const AuthCtx=useContext(AuthContext)
 const [verify,setVerify]=useState(null)
-//------------------------------------------------useEffect----------------------------------------
+//------------------------------------------------useEffect-----------------------------------------------
     useEffect(() => {
      async function fetchData(){
     const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg", {
@@ -32,7 +32,7 @@ fetchData()
     }, [])
     console.log(preVal)
    
- //----------------------------post request--------------------------------------------------
+ //----------------------------post request------------------------------------------------------------
    
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +57,7 @@ fetchData()
     name.current.value = "";
     url.current.value = "";
   };
-  //------------------------------------------verifyEmail-------------------------------------
+  //------------------------------------------verifyEmail-----------------------------------------------
   const verifyEmail=async()=>{
     const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg", {
       method: "POST",

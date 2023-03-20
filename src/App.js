@@ -18,9 +18,9 @@ function App() {
       {AuthCtx.isLoggedIn && <Route path='/welcome'>
         <Welcome/>
       </Route>}
-     <Route path='/profile'>
+     {AuthCtx.isLoggedIn && <Route path='/profile'>
       <ProfilePage/>
-     </Route>
+     </Route>}
       
       
       </Switch>
