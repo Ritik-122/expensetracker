@@ -17,11 +17,13 @@ const removeUser=()=>{
   setToken(null)
 }
 
+
   const state = {
     isLoggedIn: userLogIn,
     token:token,
     addUser:addUser,
     removeUser:removeUser,
+    
    
   };
   return (
