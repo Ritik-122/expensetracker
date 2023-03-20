@@ -170,8 +170,8 @@ export default function Login() {
               <p onClick={clickHandler}>Login with existing account</p>
             )}
           </Button>
-          <span style={{cursor:'pointer',color:'red'}} onClick={forgotPassword}>Forgot Password?</span>
-          {isLoading && <Alert>Sending request</Alert>}
+          {isLoading ?<Alert>Sending request</Alert>:<span style={{cursor:'pointer',color:'red'}} onClick={forgotPassword}>Forgot Password?</span>
+          }        
         </Form>
         
       </Card>
