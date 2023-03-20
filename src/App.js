@@ -11,7 +11,7 @@ function App() {
     <>
     <Switch>
     {!AuthCtx.isLoggedIn && 
-        <Route path="/" exact>
+        <Route path="/">
           <Form />
         </Route>
       }

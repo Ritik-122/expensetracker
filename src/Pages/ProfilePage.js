@@ -6,7 +6,7 @@ const [preVal,setPreVal]=useState([])
 const name = useRef('');
 const url = useRef('');
 
-
+const [verify,setVerify]=useState(null)
 
     useEffect(() => {
      async function fetchData(){
@@ -54,6 +54,25 @@ fetchData()
     name.current.value = "";
     url.current.value = "";
   };
+  const verifyEmail=async()=>{
+    const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg", {
+      method: "POST",
+      body: JSON.stringify({
+      requestType:"VERIFY_EMAIL",  
+      idToken: localStorage.getItem("Token"),
+        
+      }),
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    console.log(data)
+    localStorage.setItem('email',data.email)
+   
+    setVerify(data.email)
+  }
   return (
     <>
       <h2 className="my-3">Contact Details</h2>
@@ -65,7 +84,13 @@ fetchData()
         <button className="button-10" type="submit">
           Update
         </button>
+      { !verify && !localStorage.getItem('email') ? <button className="button-10 mx-4" onClick={verifyEmail}>
+          Verify Email
+        </button>:''}  
+     
+          
       </form>
+
     </>
   );
 }

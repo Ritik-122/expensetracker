@@ -43,7 +43,7 @@ const history=useHistory()
       if (res.ok) {
         const data = await res.json();
       
-        console.log("User registered");
+        console.log("User registered",data);
       }
     }
     else{
@@ -68,7 +68,7 @@ const history=useHistory()
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem("Token", data.idToken);
-        localStorage.setItem('userEmailId',data.email)
+        // localStorage.setItem('userEmailId',data.email)
         console.log("LoggedIn");
         AuthCtx.addUser(data.idToken)
         history.replace('welcome')
