@@ -1,9 +1,9 @@
-sp{
-display:flex;
-justify-content: flex-start;
-
+.cont{
+    width: 300px;
 }
-pa{
-display: flex;
-justify-content: flex-end;
+.sp{
+    margin-left: 750px;
+}
+h4{
+    display: inline-block;
 }
