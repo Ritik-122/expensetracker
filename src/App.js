@@ -6,7 +6,7 @@ import Welcome from './Pages/Welcome'
 import ProfilePage from './Pages/ProfilePage'
 function App() {
   const AuthCtx = useContext(AuthContext);
-  console.log(AuthCtx.isLoggedIn)
+  
   return (
     <>
     <Switch>

@@ -16,11 +16,13 @@ const removeUser=()=>{
   localStorage.clear()
   setToken(null)
 }
+
   const state = {
     isLoggedIn: userLogIn,
     token:token,
     addUser:addUser,
-    removeUser:removeUser
+    removeUser:removeUser,
+   
   };
   return (
     <AuthContext.Provider value={state}>{props.children}</AuthContext.Provider>

@@ -1,18 +1,52 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useEffect } from "react";
 import classes from "../Pages/Welcome.module.css";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import ExpenseList from "./ExpenseList";
 import Table from 'react-bootstrap/Table';
+
 export default function Welcome() {
+
   const [data,setData]=useState([])
+  const [apiData,setApiData]=useState([])
   
   const price=useRef('')
   const desc=useRef('')
   const cat=useRef('')
 let showExpenseList
-  const submitExpenses=(e)=>{
+useEffect(() => {
+  async function fetching(){
+    const res = await fetch(
+      "https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details.json",
+      {
+        method: "GET",
+        mode: "cors",
+      }
+    );
+    const d=await res.json()
+     if(res.ok)
+     {
+     const arr=[]
+     for(const key in d){
+      arr.push({
+        id:key,
+        price: d[key].price,
+        des: d[key].description,
+        cat: d[key].category,
+      })
+     }
+     
+       setApiData(arr)
+     }
+  }
+  fetching()
+  
+
+ 
+}, [data])
+
+  const submitExpenses=async(e)=>{
     e.preventDefault();
     const pVal=price.current.value
     const dVal=desc.current.value
@@ -22,17 +56,34 @@ let showExpenseList
         description:dVal,
         category:cVal       
     }
+    const res = await fetch(
+      "https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details.json",
+      {
+        method: "POST",
+        mode: "cors",
+        body: JSON.stringify(obj),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     
-    setData([...data,obj])
+     if(res.ok)
+     {
+     
+       setData([...data,obj])
+     }
     
-    e.preventDefault();
+    
+    
+   
    price.current.value=''
     desc.current.value=''
     cat.current.value=''
 
   }
-  console.log(data)
-  showExpenseList=data.map((i,index)=><ExpenseList price={i.price} desc={i.description} cat={i.category} count={index}/>)
+  
+  showExpenseList=apiData.map((i,index)=><ExpenseList price={i.price} desc={i.des} cat={i.cat} count={index+1}/>)
   return (
     <>
       
@@ -66,7 +117,8 @@ let showExpenseList
           </Button>
         </Form>
      </div>
-     <Table striped bordered hover variant="dark" className="my-3">
+     <div className={classes.btable}>
+     <Table striped bordered hover variant="dark" className="my-3 mx-4">
     <thead>
       <tr>
         <th>#</th>
@@ -78,6 +130,7 @@ let showExpenseList
     <tbody>{showExpenseList}</tbody>
     
   </Table>
+  </div>
      
     </>
   );
