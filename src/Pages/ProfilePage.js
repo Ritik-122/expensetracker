@@ -1,13 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Button } from "react-bootstrap";
+import AuthContext from "../store/context";
 import "./ProfilePage.css";
+import { Link } from "react-router-dom";
 export default function ProfilePage() {
   
 const [preVal,setPreVal]=useState([])
 const name = useRef('');
 const url = useRef('');
-
+const AuthCtx=useContext(AuthContext)
 const [verify,setVerify]=useState(null)
-
+//------------------------------------------------useEffect----------------------------------------
     useEffect(() => {
      async function fetchData(){
     const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg", {
@@ -29,7 +32,7 @@ fetchData()
     }, [])
     console.log(preVal)
    
- 
+ //----------------------------post request--------------------------------------------------
    
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,6 +57,7 @@ fetchData()
     name.current.value = "";
     url.current.value = "";
   };
+  //------------------------------------------verifyEmail-------------------------------------
   const verifyEmail=async()=>{
     const res = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBidV1BXfH0QkFRbCo9RYeo2zXEHNTZVWg", {
       method: "POST",
@@ -73,9 +77,15 @@ fetchData()
    
     setVerify(data.email)
   }
+  const logout=()=>{
+    AuthCtx.removeUser()
+  
+  }
+  //----------------------------------------------return here----------------------------------------------
   return (
     <>
       <h2 className="my-3">Contact Details</h2>
+      <Link to='/'><Button size="sm" onClick={logout}>Log Out</Button></Link>
       <form onSubmit={handleSubmit}>
         <label>Full Name:</label>
         <input ref={name} value={preVal.displayName} req></input>
@@ -90,7 +100,7 @@ fetchData()
      
           
       </form>
-
+    
     </>
   );
 }

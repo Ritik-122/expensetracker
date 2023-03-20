@@ -71,7 +71,7 @@ const history=useHistory()
         // localStorage.setItem('userEmailId',data.email)
         console.log("LoggedIn");
         AuthCtx.addUser(data.idToken)
-        history.replace('welcome')
+        history.replace('/welcome')
       }
     }
     }
