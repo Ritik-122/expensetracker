@@ -9,7 +9,7 @@ import { authActions } from "../store/redux";
  
 export default function Login() {
   const dispatch=useDispatch()
-  const isLoggedIn=useSelector((state)=>state.auth.status)
+  const isLoggedIn=useSelector((state)=>state.auth.token)
 
 
   const[isLoading,setisLoding]=useState(false)

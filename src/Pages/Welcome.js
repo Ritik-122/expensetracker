@@ -3,14 +3,23 @@ import classes from "../Pages/Welcome.module.css";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { saveAs } from 'file-saver';
 
 import Table from "react-bootstrap/Table";
-
+import { useDispatch, useSelector } from "react-redux";
+import { expenseActions, premiumAccountActions } from "../store/redux";
 
 export default function Welcome() {
+
+  const dispatch=useDispatch()
+  const apiData=useSelector((state)=>state.expense.data)
+  const isPremium=useSelector((state)=>state.premiumAccount.showPremium)
+  const isPremiumActivated=useSelector((state)=>state.premiumAccount.toggle)
+  
+
   const [data, setData] = useState([]);
 
-  const [apiData, setApiData] = useState([]);
+
 
   const [deleteD, setDelete] = useState(false);
   const [edit, setEdit] = useState(false);
@@ -21,6 +30,7 @@ export default function Welcome() {
   const desc = useRef("");
   const cat = useRef("");
   let showExpenseList;
+
   useEffect(() => {
     async function fetching() {
       const res = await fetch(
@@ -42,7 +52,7 @@ export default function Welcome() {
           });
         }
 
-        setApiData(arr);
+        dispatch(expenseActions.addData(arr));
       }
     }
     fetching();
@@ -139,6 +149,19 @@ export default function Welcome() {
       }
     }
   };
+  let c=0
+ let t= apiData.map((i)=>c+=Number(i.price))
+ if(c>=10000){
+  dispatch(premiumAccountActions.showPremiumButton(true))
+ }else{
+  dispatch(premiumAccountActions.showPremiumButton(false))
+ }
+
+ const applyDarkTheme=()=>{
+
+  dispatch(premiumAccountActions.toggleButton(true))
+
+ }
 
   showExpenseList = apiData.map((i, index) => (
     <tr>
@@ -154,13 +177,32 @@ export default function Welcome() {
       </td>
     </tr>
   ));
+  /////////////////////////////////////////////////////DOWNLOAD//////////////////////////////////////
+  const onDownloadClickHandler = () => {
+    const csv = Object.entries(apiData).map((expense) => {
+     
+      return [expense[1].price, expense[1].des, expense[1].cat];
+    });
 
+    console.log(csv);
+    const makeCSV = (rows) => {
+      return rows.map((r) => r.join(",")).join("\n");
+    };
+
+    const blob1 = new Blob([makeCSV(csv)]);
+
+    
+    const temp = URL.createObjectURL(blob1)
+    saveAs(temp, "file1.csv")
+  };
+  ///////////////////////////////////////////////DOWNLOAD////////////////////////////////////////////////
   return (
     <>
       <h4>Welcome to Expense Tracker,</h4>
       <span className={classes.sp}>
         Your profile is incomplete. <Link to="/profile">Complete Now</Link>{" "}
       </span>
+      <span><Button size="sm" onClick={onDownloadClickHandler}>Download Expenses</Button></span>
       <div className="mx-2 ">
         <Form onSubmit={submitExpenses}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -205,7 +247,7 @@ export default function Welcome() {
         </Form>
       </div>
       <div className={classes.btable}>
-        <Table striped bordered hover variant="dark" className="my-3 mx-4">
+        <Table striped bordered hover variant={isPremiumActivated ? "dark":''} className="my-3 mx-4" >
           <thead>
             <tr>
               <th>#</th>
@@ -216,6 +258,7 @@ export default function Welcome() {
             </tr>
           </thead>
           <tbody>{showExpenseList}</tbody>
+         {isPremium && <Button onClick={applyDarkTheme}>{isPremiumActivated?"Deactivate Premium" :'Activate Premium'}</Button>}
         </Table>
       </div>
     </>
