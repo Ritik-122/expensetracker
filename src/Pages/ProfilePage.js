@@ -1,15 +1,19 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
-import AuthContext from "../store/context";
+
 import "./ProfilePage.css";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/redux";
 export default function ProfilePage() {
-  
+  const history=useHistory()
 const [preVal,setPreVal]=useState([])
 const name = useRef('');
 const url = useRef('');
-const AuthCtx=useContext(AuthContext)
+
 const [verify,setVerify]=useState(null)
+const dispatch=useDispatch()
+
 //------------------------------------------------useEffect-----------------------------------------------
     useEffect(() => {
      async function fetchData(){
@@ -24,13 +28,14 @@ const [verify,setVerify]=useState(null)
       },
     });
     const data = await res.json();
-    // console.log(data)
+   
+    
     setPreVal(data.users[0].providerUserInfo[0])
     
 }
 fetchData()
     }, [])
-    console.log(preVal)
+    
    
  //----------------------------post request------------------------------------------------------------
    
@@ -78,14 +83,15 @@ fetchData()
     setVerify(data.email)
   }
   const logout=()=>{
-    AuthCtx.removeUser()
+   dispatch(authActions.logout())
+    history.replace('/')
   
   }
   //----------------------------------------------return here----------------------------------------------
   return (
     <>
       <h2 className="my-3">Contact Details</h2>
-      <Link to='/'><Button size="sm" onClick={logout}>Log Out</Button></Link>
+      <Button size="sm" onClick={logout}>Log Out</Button>
       <form onSubmit={handleSubmit}>
         <label>Full Name:</label>
         <input ref={name} value={preVal.displayName} req></input>

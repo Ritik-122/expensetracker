@@ -1,29 +1,50 @@
 import Login from "./LoginSign/Login";
-import { Route, Switch } from "react-router-dom";
-import { useContext } from "react";
-import AuthContext from "./store/context";
+import { Redirect, Route, Switch } from "react-router-dom";
 import Welcome from "./Pages/Welcome";
 import ProfilePage from "./Pages/ProfilePage";
+import { useSelector} from "react-redux";
+
+ 
+
+
 function App() {
-  const AuthCtx = useContext(AuthContext);
+ 
+  const isLoggedIn=useSelector((state)=>state.auth.token)
+  console.log(isLoggedIn?true:false)
+
 
   return (
     <>
       <Switch>
-        {!AuthCtx.isLoggedIn && (
-          <Route path="/">
+        {!isLoggedIn && (
+          <Route exact path="/">
             <Login />
           </Route>
         )}
-       
-        {AuthCtx.isLoggedIn && (
-          <Route path="/welcome">
+
+        {isLoggedIn && (
+          <Route exact  path="/">
+           <Redirect to='/welcome' />
+          </Route>
+        )}
+        {isLoggedIn && (
+          <Route exact path="/welcome">
             <Welcome />
           </Route>
         )}
-        {AuthCtx.isLoggedIn && (
-          <Route path="/profile">
+        {!isLoggedIn && (
+          <Route exact path="/welcome">
+          <Redirect to='/' />
+          </Route>
+        )}
+        {isLoggedIn && (
+          <Route exact path="/profile">
             <ProfilePage />
+          </Route>
+        )}
+        {!isLoggedIn && (
+          <Route exact path="/profile">
+          <Redirect to='/' />
           </Route>
         )}
       </Switch>

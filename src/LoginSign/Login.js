@@ -1,17 +1,23 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "../Card/Card";
-import { Link, useHistory } from "react-router-dom";
-import AuthContext from "../store/context";
+import {  useHistory } from "react-router-dom";
 import { Alert } from "react-bootstrap";
+import { useSelector,useDispatch } from "react-redux";
+import { authActions } from "../store/redux";
+ 
 export default function Login() {
+  const dispatch=useDispatch()
+  const isLoggedIn=useSelector((state)=>state.auth.status)
+
+
   const[isLoading,setisLoding]=useState(false)
   const history = useHistory();
   const email = useRef("");
   const password = useRef("");
   const cnfpassword = useRef("");
-  const AuthCtx = useContext(AuthContext);
+  
 
   const [signUp, setSignUp] = useState(false);
  
@@ -70,8 +76,9 @@ export default function Login() {
           const data = await res.json();
           localStorage.setItem("Token", data.idToken);
          
-          console.log("LoggedIn");
-          AuthCtx.addUser(data.idToken);
+       
+          dispatch(authActions.login(data.idToken))
+
           history.replace("/welcome");
         }
       }
@@ -115,7 +122,7 @@ export default function Login() {
       alert(d.error.message);
     }
     if (res.ok) {
-      const data = await res.json();
+      await res.json();
       setisLoding(false)
      
     }
@@ -158,7 +165,7 @@ export default function Login() {
               required
             />
           </Form.Group>
-          {!AuthCtx.isLoggedIn && (
+          {!isLoggedIn && (
             <Button variant="primary" type="submit">
               {signUp ? "Login" : "SignUp"}
             </Button>
