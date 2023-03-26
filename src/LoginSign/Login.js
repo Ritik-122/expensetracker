@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
-import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "../Card/Card";
 import {  useHistory } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import { useSelector,useDispatch } from "react-redux";
 import { authActions } from "../store/redux";
- 
+import { CssBaseline } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
 export default function Login() {
   const dispatch=useDispatch()
   const isLoggedIn=useSelector((state)=>state.auth.token)
@@ -132,6 +132,7 @@ export default function Login() {
   //-------------------------------------------return ----------------------------------------
   return (
     <>
+    <CssBaseline/>
       <Card>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -156,7 +157,7 @@ export default function Login() {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
               type="password"
@@ -166,11 +167,11 @@ export default function Login() {
             />
           </Form.Group>
           {!isLoggedIn && (
-            <Button variant="primary" type="submit">
+            <Button variant="contained" color="primary" type="submit">
               {signUp ? "Login" : "SignUp"}
             </Button>
           )}
-          <Button size="sm" className="mx-3">
+          <Button variant="contained" color="primary"  className="mx-3">
             {signUp === true ? (
               <p onClick={clickHandler}>Create new account</p>
             ) : (

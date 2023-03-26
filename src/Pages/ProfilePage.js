@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button } from "react-bootstrap";
 
+import Button from '@material-ui/core/Button';
 import "./ProfilePage.css";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/redux";
+import { AppBar, CssBaseline } from "@material-ui/core";
 export default function ProfilePage() {
   const history=useHistory()
 const [preVal,setPreVal]=useState([])
@@ -90,8 +91,10 @@ fetchData()
   //----------------------------------------------return here----------------------------------------------
   return (
     <>
-      <h2 className="my-3">Contact Details</h2>
-      <Button size="sm" onClick={logout}>Log Out</Button>
+    <CssBaseline/>
+    <AppBar position="relative"><h2 className="my-3">Contact Details</h2>
+     </AppBar>
+     <Button variant="contained" color="primary" className="my-3" onClick={logout}>Log Out</Button>
       <form onSubmit={handleSubmit}>
         <label>Full Name:</label>
         <input ref={name} value={preVal.displayName} req></input>

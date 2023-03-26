@@ -8,6 +8,7 @@ import { saveAs } from 'file-saver';
 import Table from "react-bootstrap/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { expenseActions, premiumAccountActions } from "../store/redux";
+import { CssBaseline } from "@material-ui/core";
 
 export default function Welcome() {
 
@@ -198,6 +199,7 @@ export default function Welcome() {
   ///////////////////////////////////////////////DOWNLOAD////////////////////////////////////////////////
   return (
     <>
+    <CssBaseline/>
       <h4>Welcome to Expense Tracker,</h4>
       <span className={classes.sp}>
         Your profile is incomplete. <Link to="/profile">Complete Now</Link>{" "}
