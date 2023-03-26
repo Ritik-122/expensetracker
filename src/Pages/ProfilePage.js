@@ -5,7 +5,7 @@ import "./ProfilePage.css";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/redux";
-import { AppBar, CssBaseline } from "@material-ui/core";
+import { AppBar, CssBaseline, Toolbar, Typography } from "@material-ui/core";
 export default function ProfilePage() {
   const history=useHistory()
 const [preVal,setPreVal]=useState([])
@@ -92,9 +92,13 @@ fetchData()
   return (
     <>
     <CssBaseline/>
-    <AppBar position="relative"><h2 className="my-3">Contact Details</h2>
+    <AppBar position="relative">
+    <Toolbar>
+    <Typography variant="h4"  style={{marginRight:'1000px'}}>Contact Details</Typography>
+    <Button variant="contained" color="default" className="my-3" onClick={logout}>Log Out</Button>
+    </Toolbar>
      </AppBar>
-     <Button variant="contained" color="primary" className="my-3" onClick={logout}>Log Out</Button>
+     
       <form onSubmit={handleSubmit}>
         <label>Full Name:</label>
         <input ref={name} value={preVal.displayName} req></input>

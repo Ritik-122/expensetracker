@@ -1,17 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import classes from "../Pages/Welcome.module.css";
 import { Link } from "react-router-dom";
-import Button from "react-bootstrap/Button";
+import { authActions } from "../store/redux";
 import Form from "react-bootstrap/Form";
 import { saveAs } from 'file-saver';
-
+import { useHistory } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { expenseActions, premiumAccountActions } from "../store/redux";
-import { CssBaseline } from "@material-ui/core";
-
+import { AppBar, CssBaseline, Toolbar, Typography } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 export default function Welcome() {
-
+const history=useHistory()
   const dispatch=useDispatch()
   const apiData=useSelector((state)=>state.expense.data)
   const isPremium=useSelector((state)=>state.premiumAccount.showPremium)
@@ -31,11 +33,16 @@ export default function Welcome() {
   const desc = useRef("");
   const cat = useRef("");
   let showExpenseList;
-
+  let email_id=localStorage.getItem('Email')
+      email_id=email_id.replace('@','')
+      email_id=email_id.replace('.','')
+      console.log(email_id)
+  
   useEffect(() => {
     async function fetching() {
+    
       const res = await fetch(
-        "https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details.json",
+        `https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details/${email_id}.json`,
         {
           method: "GET",
           mode: "cors",
@@ -70,7 +77,7 @@ export default function Welcome() {
       category: cVal,
     };
     const res = await fetch(
-      "https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details.json",
+      `https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details/${email_id}.json`,
       {
         method: "POST",
         mode: "cors",
@@ -108,7 +115,7 @@ export default function Welcome() {
       category: cVal,
     };
     const res = await fetch(
-      `https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details/${isId}.json`,
+      `https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details/${email_id}/${isId}.json`,
       {
         method: "PUT",
         body: JSON.stringify(obj),
@@ -135,7 +142,7 @@ export default function Welcome() {
   ////////////////////////////////////////////////DELETEDATA///////////////////////////////////////////////
   const deleteData = async (id) => {
     const res = await fetch(
-      `https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details/${id}.json`,
+      `https://expensetracker-1d0d3-default-rtdb.firebaseio.com/details/${email_id}/${id}.json`,
       {
         method: "DELETE",
         mode: "cors",
@@ -166,15 +173,16 @@ export default function Welcome() {
 
   showExpenseList = apiData.map((i, index) => (
     <tr>
-      <td>{index}</td>
+      <td>{index+1}</td>
       <td>{i.price}</td>
       <td>{i.des}</td>
       <td>{i.cat}</td>
       <td>
-        <button onClick={() => editData(i.id, i.price, i.des, i.cat)}>
+        <Button variant="contained" color="primary" size='small' startIcon={<EditIcon />} onClick={() => editData(i.id, i.price, i.des, i.cat)}>
           Edit
-        </button>{" "}
-        <button onClick={() => deleteData(i.id)}>Delete</button>
+        </Button>{" "}
+        <Button variant="contained"
+        color="secondary" size='small' startIcon={<DeleteIcon />} onClick={() => deleteData(i.id)}>Delete</Button>
       </td>
     </tr>
   ));
@@ -197,14 +205,31 @@ export default function Welcome() {
     saveAs(temp, "file1.csv")
   };
   ///////////////////////////////////////////////DOWNLOAD////////////////////////////////////////////////
+  const logout=()=>{
+    dispatch(authActions.logout())
+     history.replace('/')
+   
+   }
   return (
     <>
     <CssBaseline/>
-      <h4>Welcome to Expense Tracker,</h4>
-      <span className={classes.sp}>
-        Your profile is incomplete. <Link to="/profile">Complete Now</Link>{" "}
-      </span>
-      <span><Button size="sm" onClick={onDownloadClickHandler}>Download Expenses</Button></span>
+    <AppBar color='transparent' position="relative">
+    <Toolbar>
+    <Typography align="left" variant="h4" style={{marginRight:'650px'}} >Welcome to Expense Tracker</Typography>
+    <Button variant="contained" color="primary" size="small" style={{marginRight:'40px'}} onClick={logout}>Log Out</Button>
+    <Button  variant="contained" color="primary" size="small" onClick={onDownloadClickHandler}>Download Expenses</Button>
+
+    
+    </Toolbar>
+    
+    </AppBar>
+    
+    <Typography align="right"  variant="subtitle1"  >
+      Your profile is incomplete.<Link to="/profile">Complete Now</Link>{" "}
+      </Typography>
+      
+      
+     
       <div className="mx-2 ">
         <Form onSubmit={submitExpenses}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -237,12 +262,12 @@ export default function Welcome() {
           </Form.Group>
 
           {!edit && (
-            <Button variant="primary" type="submit" className="my-2">
+            <Button variant="contained" color="primary" type="submit" className="my-2">
               Add Expense
             </Button>
           )}
           {edit && (
-            <Button variant="primary" className="my-2" onClick={putReqHandler}>
+            <Button  variant="contained" color="primary" className="my-2" onClick={putReqHandler}>
               Submit Changes
             </Button>
           )}

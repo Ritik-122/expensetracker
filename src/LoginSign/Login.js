@@ -7,6 +7,8 @@ import { useSelector,useDispatch } from "react-redux";
 import { authActions } from "../store/redux";
 import { CssBaseline } from "@material-ui/core";
 import Button from '@material-ui/core/Button';
+
+
 export default function Login() {
   const dispatch=useDispatch()
   const isLoggedIn=useSelector((state)=>state.auth.token)
@@ -74,6 +76,7 @@ export default function Login() {
         }
         if (res.ok) {
           const data = await res.json();
+           localStorage.setItem('Email',data.email)
           localStorage.setItem("Token", data.idToken);
          
        
@@ -135,9 +138,9 @@ export default function Login() {
     <CssBaseline/>
       <Card>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
+         <Form.Group className="mb-3" controlId="formBasicEmail"> 
+            <Form.Label>Email</Form.Label>
+             <Form.Control
               type="email"
               placeholder="Enter email"
               ref={email}
